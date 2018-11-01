@@ -573,6 +573,16 @@ impl VideoPlayer {
                 });
             });
 
+            ui_ctx.set_text_offset_entry_updated_callback(|offset| {
+                GLOBAL.with(|global| {
+                    if let Some(ref video_player) = *global.borrow() {
+                        if let Some(ref player) = video_player.player_context {
+                            player.set_text_offset(offset);
+                        }
+                    }
+                });
+            });
+
             ui_ctx.start(|| {
                 GLOBAL.with(|global| {
                     if let Some(ref video_player) = *global.borrow() {

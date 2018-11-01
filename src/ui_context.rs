@@ -34,8 +34,10 @@ pub struct UIContext {
     pub progress_bar: gtk::Scale,
     pub volume_button: gtk::VolumeButton,
     pub toolbar_box: gtk::Box,
+    pub text_offset_entry: gtk::Entry,
     volume_signal_handler_id: Option<glib::SignalHandlerId>,
     position_signal_handler_id: Option<glib::SignalHandlerId>,
+    text_offset_entry_signal_handler_id: Option<glib::SignalHandlerId>,
 }
 
 const MINIMAL_WINDOW_SIZE: (i32, i32) = (640, 480);
@@ -94,6 +96,14 @@ impl UIContext {
 
         toolbar_box.pack_start(&volume_button, false, false, 5);
 
+        let text_offset_entry = {
+            let entry = gtk::Entry::new();
+            entry.set_text("0");
+            entry
+        };
+
+        toolbar_box.pack_start(&text_offset_entry, false, false, 5);
+
         let fullscreen_button = {
             let button = gtk::Button::new();
             let fullscreen_image =
@@ -132,8 +142,10 @@ impl UIContext {
             progress_bar,
             volume_button,
             toolbar_box,
+            text_offset_entry,
             volume_signal_handler_id: None,
             position_signal_handler_id: None,
+            text_offset_entry_signal_handler_id: None
         }
     }
 
@@ -277,6 +289,15 @@ impl UIContext {
         let range = self.progress_bar.clone().upcast::<gtk::Range>();
         self.position_signal_handler_id = Some(range.connect_value_changed(move |range| {
             f(range.get_value() as u64);
+        }));
+    }
+
+    pub fn set_text_offset_entry_updated_callback<F: Fn(i64) + Send + Sync + 'static>(&mut self, f: F) {
+        let entry = self.text_offset_entry.clone();
+        self.text_offset_entry_signal_handler_id = Some(entry.connect_activate(move |entry| {
+            if let Some(text) = entry.get_text() {
+                f(text.parse::<i64>().unwrap()  * 1_000_000_000);
+            }
         }));
     }
 

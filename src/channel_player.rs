@@ -610,4 +610,8 @@ impl ChannelPlayer {
             });
         }
     }
+
+    pub fn set_text_offset(&self, offset: i64) {
+        self.player.set_property("subtitle-video-offset", &glib::Value::from(&offset)).unwrap();
+    }
 }
