@@ -22,7 +22,7 @@ Installation
 ------------
 
 Currently Glide isn't packaged for any Linux distribution or macOS
-package manager. So the only way to install it is with Cargo:
+package manager. So the only way to install it with Cargo:
 
 1.  Install [RustUp](https://rustup.rs):
 
